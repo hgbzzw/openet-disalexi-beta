@@ -52,8 +52,7 @@ Each OpenET model should be stored in the "openet" folder (namespace).  The bene
 References
 ==========
 
- * `Senay et al., 2013 <http://onlinelibrary.wiley.com/doi/10.1111/jawr.12057/abstract>`__
- * `Senay et al., 2016 <http://www.sciencedirect.com/science/article/pii/S0034425715302650>`__
+
 
 .. |build| image:: https://travis-ci.org/Open-ET/openet-disalexi-beta.svg?branch=master
    :alt: Build status

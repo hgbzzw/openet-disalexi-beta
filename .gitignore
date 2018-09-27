@@ -25,3 +25,6 @@ dist/
 # Earth Engine keys
 privatekey.json
 privatekey.b64
+
+# Miscellaneous files
+notes.txt

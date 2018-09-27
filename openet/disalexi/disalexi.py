@@ -11,8 +11,6 @@ from . import tseb
 from . import tseb_utils
 from . import utils
 
-ee.Initialize()
-
 
 class Image(object):
     """Earth Engine DisALEXI"""
