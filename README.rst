@@ -9,7 +9,7 @@ This repository provides an Earth Engine Python API based implementation of the 
 Examples
 ========
 
-Jupyter notebooks are provided in the "examples" folder that show various approaches for calling the OpenET SSEBop model.
+Jupyter notebooks are provided in the "examples" folder that show various approaches for calling the OpenET DisALEXI model.
 
 Installation
 ============

@@ -4,7 +4,7 @@ import math
 import ee
 import pytest
 
-import openet.disalexi.TSEB_utils as TSEB_utils
+import openet.disalexi.tseb_utils as tseb_utils
 import openet.disalexi.utils as utils
 from idl_values import ne1, ne2, ne3
 
@@ -26,7 +26,7 @@ from idl_values import ne1, ne2, ne3
 def test_to_jd(timestamp, expected, tol=0.001):
     """"""
     date = ee.Date(timestamp)
-    output = TSEB_utils._to_jd(date).getInfo()
+    output = tseb_utils._to_jd(date).getInfo()
 
     logging.debug('\n  Target values: {}'.format(expected))
     logging.debug('  Output values: {}'.format(output))
@@ -46,7 +46,7 @@ def test_to_jd(timestamp, expected, tol=0.001):
 )
 def test_sunrise_sunset_image(timestamp, xy, expected, tol=1E-10):
     """Check that the sunset_sunrise function works for real images"""
-    output_images = TSEB_utils.sunrise_sunset(
+    output_images = tseb_utils.sunrise_sunset(
         date=ee.Date(timestamp),
         # date=ee.Date(datetime.datetime.utcfromtimestamp(timestamp / 1000)),
         lon=ee.Image.pixelLonLat().select(['longitude']).multiply(math.pi / 180),
@@ -74,7 +74,7 @@ def test_sunrise_sunset_image(timestamp, xy, expected, tol=1E-10):
 )
 def test_sunrise_sunset_constant(timestamp, xy, expected, tol=1E-10):
     """Check that the sunset_sunrise function works for constant images"""
-    output_images = TSEB_utils.sunrise_sunset(
+    output_images = tseb_utils.sunrise_sunset(
         date=ee.Date(timestamp),
         lon=ee.Image.constant(xy[0]).multiply(math.pi / 180),
         lat=ee.Image.constant(xy[1]).multiply(math.pi / 180))
@@ -98,7 +98,7 @@ def test_sunrise_sunset_constant(timestamp, xy, expected, tol=1E-10):
 )
 def test_solar_zenith_image(timestamp, xy, expected, tol=1E-10):
     """Check that the solar zenith function works for real images"""
-    output_images = TSEB_utils.solar_zenith(
+    output_images = tseb_utils.solar_zenith(
         date=ee.Date(timestamp),
         lon=ee.Image.pixelLonLat().select(['longitude']).multiply(math.pi / 180),
         lat=ee.Image.pixelLonLat().select(['latitude']).multiply(math.pi / 180))
@@ -120,7 +120,7 @@ def test_solar_zenith_image(timestamp, xy, expected, tol=1E-10):
 )
 def test_solar_zenith_constant(timestamp, xy, expected, tol=1E-10):
     """Check that the solar_zenith function also works for constant images"""
-    output_images = TSEB_utils.solar_zenith(
+    output_images = tseb_utils.solar_zenith(
         date=ee.Date(timestamp),
         lon=ee.Image.constant(xy[0]).multiply(math.pi / 180),
         lat=ee.Image.constant(xy[1]).multiply(math.pi / 180))
@@ -143,7 +143,7 @@ def test_solar_zenith_constant(timestamp, xy, expected, tol=1E-10):
     ]
 )
 def test_emissivity(T_air, expected, tol=1E-8):
-    output_image = TSEB_utils.emissivity(ee.Image.constant(T_air))
+    output_image = tseb_utils.emissivity(ee.Image.constant(T_air))
 
     output = list(utils.constant_image_value(output_image).values())[0]
     logging.debug('\n  Target values: {}'.format(expected))
@@ -178,7 +178,7 @@ def test_emissivity(T_air, expected, tol=1E-8):
 def test_albedo_separation(albedo, Rs_1, F, fc, aleafv, aleafn, aleafl, adeadv,
                            adeadn, adeadl, zs, iterations, expected,
                            tol=1E-10):
-    output_images = TSEB_utils.albedo_separation(
+    output_images = tseb_utils.albedo_separation(
         ee.Image.constant(albedo), ee.Image.constant(Rs_1),
         ee.Image.constant(F), ee.Image.constant(fc), ee.Image.constant(aleafv),
         ee.Image.constant(aleafn), ee.Image.constant(aleafl),
@@ -210,7 +210,7 @@ def test_albedo_separation(albedo, Rs_1, F, fc, aleafv, aleafn, aleafl, adeadv,
     ]
 )
 def test_compute_u_attr(u, d0, z0m, z_u, fm, expected, tol=1E-10):
-    output_image = TSEB_utils.compute_u_attr(
+    output_image = tseb_utils.compute_u_attr(
         ee.Image.constant(u), ee.Image.constant(d0), ee.Image.constant(z0m),
         ee.Image.constant(z_u), ee.Image.constant(fm))
 
@@ -236,7 +236,7 @@ def test_compute_u_attr(u, d0, z0m, z_u, fm, expected, tol=1E-10):
     ]
 )
 def test_compute_r_ah(u_attr, d0, z0h, z_t, fh, expected, tol=1E-10):
-    output_image = TSEB_utils.compute_r_ah(
+    output_image = tseb_utils.compute_r_ah(
         ee.Image.constant(u_attr), ee.Image.constant(d0),
         ee.Image.constant(z0h), ee.Image.constant(z_t), ee.Image.constant(fh))
 
@@ -267,7 +267,7 @@ def test_compute_r_ah(u_attr, d0, z0h, z_t, fh, expected, tol=1E-10):
 )
 def test_compute_r_s(u_attr, T_s, T_c, hc, F, d0, z0m, leaf, leaf_s, fm_h,
                      expected, tol=1E-10):
-    output_image = TSEB_utils.compute_r_s(
+    output_image = tseb_utils.compute_r_s(
         ee.Image.constant(u_attr), ee.Image.constant(T_s),
         ee.Image.constant(T_c), ee.Image.constant(hc), ee.Image.constant(F),
         ee.Image.constant(d0), ee.Image.constant(z0m), ee.Image.constant(leaf),
@@ -300,7 +300,7 @@ def test_compute_r_s(u_attr, T_s, T_c, hc, F, d0, z0m, leaf, leaf_s, fm_h,
 )
 def test_compute_r_x(u_attr, hc, F, d0, z0m, xl, leaf_c, fm_h,
                      expected, tol=1E-10):
-    output_image = TSEB_utils.compute_r_x(
+    output_image = tseb_utils.compute_r_x(
         ee.Image.constant(u_attr), ee.Image.constant(hc), ee.Image.constant(F),
         ee.Image.constant(d0), ee.Image.constant(z0m), ee.Image.constant(xl),
         ee.Image.constant(leaf_c), ee.Image.constant(fm_h))
@@ -330,7 +330,7 @@ def test_compute_r_x(u_attr, hc, F, d0, z0m, xl, leaf_c, fm_h,
 )
 def test_compute_Rn_c(albedo_c, T_air, T_c, T_s, e_atm, Rs_c, F,
                       expected, tol=1E-10):
-    output_image = TSEB_utils.compute_Rn_c(
+    output_image = tseb_utils.compute_Rn_c(
         ee.Image.constant(albedo_c), ee.Image.constant(T_air),
         ee.Image.constant(T_c), ee.Image.constant(T_s),
         ee.Image.constant(e_atm), ee.Image.constant(Rs_c),
@@ -361,7 +361,7 @@ def test_compute_Rn_c(albedo_c, T_air, T_c, T_s, e_atm, Rs_c, F,
 )
 def test_compute_Rn_s(albedo_s, T_air, T_c, T_s, e_atm, Rs_s, F,
                       expected, tol=1E-10):
-    output_image = TSEB_utils.compute_Rn_s(
+    output_image = tseb_utils.compute_Rn_s(
         ee.Image.constant(albedo_s), ee.Image.constant(T_air),
         ee.Image.constant(T_c), ee.Image.constant(T_s),
         ee.Image.constant(e_atm), ee.Image.constant(Rs_s),
@@ -392,7 +392,7 @@ def test_compute_Rn_s(albedo_s, T_air, T_c, T_s, e_atm, Rs_s, F,
 )
 def test_compute_G0(Rn, Rn_s, albedo, ndvi, t_rise, t_end, time, EF_s,
                     expected, tol=1E-10):
-    output_image = TSEB_utils.compute_G0(
+    output_image = tseb_utils.compute_G0(
         ee.Image.constant(Rn), ee.Image.constant(Rn_s),
         ee.Image.constant(albedo), ee.Image.constant(ndvi),
         ee.Image.constant(t_rise), ee.Image.constant(t_end),
@@ -424,7 +424,7 @@ def test_compute_G0(Rn, Rn_s, albedo, ndvi, t_rise, t_end, time, EF_s,
 )
 def test_temp_separation_tc(H_c, fc_q, T_air, t0, r_ah, r_s, r_x, r_air,
                             expected, tol=1E-10):
-    output_image = TSEB_utils.temp_separation_tc(
+    output_image = tseb_utils.temp_separation_tc(
         ee.Image.constant(H_c), ee.Image.constant(fc_q), ee.Image.constant(T_air),
         ee.Image.constant(t0), ee.Image.constant(r_ah), ee.Image.constant(r_s),
         ee.Image.constant(r_x), ee.Image.constant(r_air))
@@ -451,7 +451,7 @@ def test_temp_separation_tc(H_c, fc_q, T_air, t0, r_ah, r_s, r_x, r_air,
 )
 def test_temp_separation_ts(T_c, fc_q, T_air, t0,
                             expected, tol=1E-10):
-    output_image = TSEB_utils.temp_separation_ts(
+    output_image = tseb_utils.temp_separation_ts(
         ee.Image.constant(T_c), ee.Image.constant(fc_q),
         ee.Image.constant(T_air), ee.Image.constant(t0))
 
@@ -480,7 +480,7 @@ def test_temp_separation_ts(T_c, fc_q, T_air, t0,
 )
 def test_temp_separation_tac(T_c, T_s, fc_q, T_air, r_ah, r_s, r_x,
                              expected, tol=1E-6):
-    output_image = TSEB_utils.temp_separation_tac(
+    output_image = tseb_utils.temp_separation_tac(
         ee.Image.constant(T_c), ee.Image.constant(T_s), ee.Image.constant(fc_q),
         ee.Image.constant(T_air), ee.Image.constant(r_ah),
         ee.Image.constant(r_s), ee.Image.constant(r_x))
@@ -514,7 +514,7 @@ def test_temp_separation_tac(T_c, T_s, fc_q, T_air, r_ah, r_s, r_x,
 )
 def test_compute_stability_fh(H, t0, u_attr, r_air, z_t, d0, expected,
                               tol=1E-10):
-    output_image = TSEB_utils.compute_stability_fh(
+    output_image = tseb_utils.compute_stability_fh(
         ee.Image.constant(H), ee.Image.constant(t0), ee.Image.constant(u_attr),
         ee.Image.constant(r_air), ee.Image.constant(z_t), ee.Image.constant(d0))
 
@@ -553,7 +553,7 @@ def test_compute_stability_fh(H, t0, u_attr, r_air, z_t, d0, expected,
 )
 def test_compute_stability_fm(H, t0, u_attr, r_air, z_u, d0, z0m, expected,
                               tol=1E-10):
-    output_image = TSEB_utils.compute_stability_fm(
+    output_image = tseb_utils.compute_stability_fm(
         ee.Image.constant(H), ee.Image.constant(t0), ee.Image.constant(u_attr),
         ee.Image.constant(r_air), ee.Image.constant(z_u),
         ee.Image.constant(d0), ee.Image.constant(z0m))
@@ -594,7 +594,7 @@ def test_compute_stability_fm(H, t0, u_attr, r_air, z_u, d0, z0m, expected,
 )
 def test_compute_stability_fm_h(H, t0, u_attr, r_air, hc, d0, z0m, expected,
                                 tol=1E-10):
-    output_image = TSEB_utils.compute_stability_fm_h(
+    output_image = tseb_utils.compute_stability_fm_h(
         ee.Image.constant(H), ee.Image.constant(t0), ee.Image.constant(u_attr),
         ee.Image.constant(r_air), ee.Image.constant(hc), ee.Image.constant(d0),
         ee.Image.constant(z0m))

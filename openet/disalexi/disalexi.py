@@ -7,8 +7,8 @@ import ee
 
 # Why can't these be imported directly
 from .lc_properties import remaps
-from . import TSEB
-from . import TSEB_utils
+from . import tseb
+from . import tseb_utils
 from . import utils
 
 ee.Initialize()
@@ -158,7 +158,7 @@ class Image(object):
             # Does the Ta image need to be projected to the Landsat image?
             # .reproject(crs=self.image_crs, crsTransform=self.image_transform)
 
-            et_img = TSEB.TSEB_PT(
+            et_img = tseb.tseb_pt(
                 T_air=t_air_coarse_img,
                 T_rad=self.lst,
                 u=self.windspeed,
@@ -248,7 +248,7 @@ class Image(object):
             # T_air_img = ee.Image.constant(ee.Number(t_air)).double()
             # return t_air_img
 
-            et = TSEB.TSEB_PT(
+            et = tseb.tseb_pt(
                 T_air=t_air_img,
                 T_rad=self.lst,
                 u=self.windspeed,
@@ -326,7 +326,7 @@ class Image(object):
         self._set_time_vars()
         self._set_weather_vars()
 
-        et = TSEB.TSEB_PT(
+        et = tseb.tseb_pt(
             T_air=T_air,
             T_rad=self.lst,
             u=self.windspeed,
@@ -513,15 +513,15 @@ class Image(object):
                 .rename(['rs'])
         else:
             self.rs1 = ee.Image(
-                ee.ImageCollection(self.rs_hourly_coll \
+                ee.ImageCollection(self.rs_hourly_coll) \
                     .filterDate(self.date, self.date.advance(1, 'day')) \
                     .filter(ee.Filter.calendarRange(self.hour_int, self.hour_int, 'hour'))
-                    .first())) \
+                    .first()) \
                 .rename(['rs'])
         self.rs24 = ee.Image(
-            ee.ImageCollection(self.rs_daily_coll \
+            ee.ImageCollection(self.rs_daily_coll) \
                 .filterDate(self.date, self.date.advance(1, 'day')) \
-                .first())) \
+                .first()) \
             .rename(['rs'])
 
     def _set_time_vars(self):
@@ -533,11 +533,11 @@ class Image(object):
             seems like it should be the float hour.
 
         """
-        self.t_rise, self.t_end = TSEB_utils.sunrise_sunset(
+        self.t_rise, self.t_end = tseb_utils.sunrise_sunset(
             date=self.datetime,
             lon=ee.Image.pixelLonLat().select(['longitude']).multiply(math.pi / 180),
             lat=ee.Image.pixelLonLat().select(['latitude']).multiply(math.pi / 180))
-        self.sol_zenith = TSEB_utils.solar_zenith(
+        self.sol_zenith = tseb_utils.solar_zenith(
             date=self.datetime,
             lon=ee.Image.pixelLonLat().select(['longitude']).multiply(math.pi / 180),
             lat=ee.Image.pixelLonLat().select(['latitude']).multiply(math.pi / 180))

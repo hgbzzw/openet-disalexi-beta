@@ -3,7 +3,7 @@ import logging
 import ee
 import pytest
 
-import openet.disalexi.TSEB as TSEB
+import openet.disalexi.tseb as tseb
 import openet.disalexi.utils as utils
 
 
@@ -41,11 +41,11 @@ import openet.disalexi.utils as utils
          26.01087501850882, 0.05, 1.32, 36, 6.69752524158102],
     ]
 )
-def test_TSEB_PT(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs, aleafv, aleafn,
+def test_tseb_pt(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs, aleafv, aleafn,
                  aleafl, adeadv, adeadn, adeadl, albedo, ndvi, lai, clump, hc,
                  time, t_rise, t_end, leaf_width, a_PT_in, iterations,
                  expected, tol=1E-8):
-    output_image = TSEB.TSEB_PT(
+    output_image = tseb.tseb_pt(
         ee.Image.constant(T_air), ee.Image.constant(T_rad),
         ee.Image.constant(u), ee.Image.constant(p), ee.Image.constant(z),
         ee.Image.constant(Rs_1), ee.Image.constant(Rs24),

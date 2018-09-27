@@ -1,10 +1,10 @@
 import ee
 
-from . import TSEB_utils
+from . import tseb_utils
 from . import utils
 
 
-def TSEB_PT(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs,
+def tseb_pt(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs,
             aleafv, aleafn, aleafl, adeadv, adeadn, adeadl,
             albedo, ndvi, lai, clump, hc, time, t_rise, t_end,
             leaf_width, a_PT_in=1.32, iterations=35):
@@ -198,12 +198,12 @@ def TSEB_PT(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs,
     #     '1.0 - (0.2811 * (exp(-0.0003523 * ((T_air - 273.16) ** 2))))',
     #     {'T_air': T_air})
 
-    Rs_c, Rs_s, albedo_c, albedo_s = TSEB_utils.albedo_separation(
+    Rs_c, Rs_s, albedo_c, albedo_s = tseb_utils.albedo_separation(
         albedo, Rs_1, F, fc, aleafv, aleafn, aleafl, adeadv, adeadn, adeadl, zs)
 
     # CGM - Moved emissivity calculation to separate function.
     #   I removed the Rs0 check.
-    e_atm = TSEB_utils.emissivity(T_air)
+    e_atm = tseb_utils.emissivity(T_air)
     # p = T_air.expression(
     #     '101.3 * (((T_air - (0.0065 * z)) / T_air) ** 5.26)',
     #     {'T_air': T_air, 'z': z})
@@ -216,18 +216,18 @@ def TSEB_PT(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs,
 
     # Assume neutral conditions on first iteration (use T_air for Ts and Tc)
     # CGM - Using lai for F to match Python code
-    u_attr = TSEB_utils.compute_u_attr(
+    u_attr = tseb_utils.compute_u_attr(
         u=u, d0=d_0, z0m=z0m, z_u=z_u, fm=0)
-    r_ah = TSEB_utils.compute_r_ah(
+    r_ah = tseb_utils.compute_r_ah(
         u_attr=u_attr, d0=d_0, z0h=z0h, z_t=z_t, fh=0)
     # CGM - Why is this function is passing "lai" to "F"?
-    r_s = TSEB_utils.compute_r_s(
+    r_s = tseb_utils.compute_r_s(
         u_attr=u_attr, T_s=T_air, T_c=T_air, hc=hc, F=lai, d0=d_0, z0m=z0m,
         leaf=leaf, leaf_s=leaf_s, fm_h=0)
-    r_x = TSEB_utils.compute_r_x(
+    r_x = tseb_utils.compute_r_x(
         u_attr=u_attr, hc=hc, F=lai, d0=d_0, z0m=z0m, xl=leaf_width,
         leaf_c=leaf_c, fm_h=0)
-    # r_ah, r_s, r_x, u_attr = TSEB_utils.compute_resistance(
+    # r_ah, r_s, r_x, u_attr = tseb_utils.compute_resistance(
     #     u, T_air, T_air, hc, lai, d_0, z0m, z0h, z_u, z_t, leaf_width, leaf,
     #     leaf_s, leaf_c, 0, 0, 0)
 
@@ -293,15 +293,15 @@ def TSEB_PT(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs,
         T_s_iter = ee.Image(ee.Dictionary(prev).get('T_s'))
         u_attr_iter = ee.Image(ee.Dictionary(prev).get('u_attr'))
 
-        Rn_c = TSEB_utils.compute_Rn_c(
+        Rn_c = tseb_utils.compute_Rn_c(
             albedo_c, T_air, T_c_iter, T_s_iter, e_atm, Rs_c, F)
-        Rn_s = TSEB_utils.compute_Rn_s(
+        Rn_s = tseb_utils.compute_Rn_s(
             albedo_s, T_air, T_c_iter, T_s_iter, e_atm, Rs_s, F)
         Rn = Rn_c.add(Rn_s)
-        # Rn_s, Rn_c, Rn = TSEB_utils.compute_Rn(
+        # Rn_s, Rn_c, Rn = tseb_utils.compute_Rn(
         #     albedo_c, albedo_s, T_air, T_c_iter, T_s_iter, e_atm, Rs_c, Rs_s, F)
 
-        G = TSEB_utils.compute_G0(
+        G = tseb_utils.compute_G0(
             Rn, Rn_s, albedo, ndvi, t_rise, t_end, time, EF_s_iter)
 
         LE_c = albedo \
@@ -313,12 +313,12 @@ def TSEB_PT(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs,
         H_c = albedo.expression(
             'Rn_c - LE_c', {'Rn_c': Rn_c, 'LE_c': LE_c})
 
-        T_c_iter = TSEB_utils.temp_separation_tc(
+        T_c_iter = tseb_utils.temp_separation_tc(
             H_c, fc_q, T_air, T_rad, r_ah_iter, r_s_iter, r_x_iter, r_air, cp)
-        T_s_iter = TSEB_utils.temp_separation_ts(T_c_iter, fc_q, T_air, T_rad)
-        T_ac = TSEB_utils.temp_separation_tac(
+        T_s_iter = tseb_utils.temp_separation_ts(T_c_iter, fc_q, T_air, T_rad)
+        T_ac = tseb_utils.temp_separation_tac(
             T_c_iter, T_s_iter, fc_q, T_air, r_ah_iter, r_s_iter, r_x_iter)
-        # T_c_iter, T_s_iter, T_ac = TSEB_utils.temp_separation(
+        # T_c_iter, T_s_iter, T_ac = tseb_utils.temp_separation(
         #     H_c, fc_q, T_air, T_rad, r_ah_iter, r_s_iter, r_x_iter, r_air, cp)
 
         H_s = albedo.expression(
@@ -344,28 +344,28 @@ def TSEB_PT(T_air, T_rad, u, p, z, Rs_1, Rs24, vza, zs,
         # mask_iter = H_iter.divide(H).lte(1.05).And(H_iter.divide(H).gte(0.95))
         # chk_iter = np.sum(mask_iter) / np.size(mask_iter)
 
-        fh = TSEB_utils.compute_stability_fh(
+        fh = tseb_utils.compute_stability_fh(
             H, T_rad, u_attr_iter, r_air, z_t, d_0, cp)
-        fm = TSEB_utils.compute_stability_fm(
+        fm = tseb_utils.compute_stability_fm(
             H, T_rad, u_attr_iter, r_air, z_u, d_0, z0m, cp)
-        fm_h = TSEB_utils.compute_stability_fm_h(
+        fm_h = tseb_utils.compute_stability_fm_h(
             H, T_rad, u_attr_iter, r_air, hc, d_0, z0m, cp)
         # CGM - z0h is not used in this function, should it be?
-        # fm, fh, fm_h = TSEB_utils.compute_stability(
+        # fm, fh, fm_h = tseb_utils.compute_stability(
         #     H, T_rad, r_air, cp, u_attr, z_u, z_t, hc, d_0, z0m, z0h)
 
-        u_attr_iter = TSEB_utils.compute_u_attr(
+        u_attr_iter = tseb_utils.compute_u_attr(
             u=u, d0=d_0, z0m=z0m, z_u=z_u, fm=fm)
-        r_ah_iter = TSEB_utils.compute_r_ah(
+        r_ah_iter = tseb_utils.compute_r_ah(
             u_attr=u_attr_iter, d0=d_0, z0h=z0h, z_t=z_t, fh=fh)
-        r_s_iter = TSEB_utils.compute_r_s(
+        r_s_iter = tseb_utils.compute_r_s(
             u_attr=u_attr_iter, T_s=T_s_iter, T_c=T_c_iter, hc=hc, F=lai,
             d0=d_0, z0m=z0m, leaf=leaf, leaf_s=leaf_s, fm_h=fm_h)
         # CGM - Why is this function is passing "lai" to "F"?
-        r_x_iter = TSEB_utils.compute_r_x(
+        r_x_iter = tseb_utils.compute_r_x(
             u_attr=u_attr_iter, hc=hc, F=lai, d0=d_0, z0m=z0m, xl=leaf_width,
             leaf_c=leaf_c, fm_h=fm_h)
-        # r_ah_iter, r_s_iter, r_x_iter, u_attr_iter = TSEB_utils.compute_resistance(
+        # r_ah_iter, r_s_iter, r_x_iter, u_attr_iter = tseb_utils.compute_resistance(
         #     u, T_s_iter, T_c_iter, hc, lai, d_0, z0m, z0h, z_u, z_t,
         #     leaf_width, leaf, leaf_s, leaf_c, fm, fh, fm_h)
 

@@ -2,7 +2,7 @@
 
 ## Initial Intermediate Function Validation
 
-The primary validation that has been done between the Python and GEE DisALEXI codes is to compare the outputs from all of the intermediate functions within TSEB_usda.py and TSEB_utils_usda.py for a single image, at two fixed points, for a small subset of air temperatures.  For this limited range of test inputs, all of the functions are generating nearly identical values (with a minimum tolerance of 0.000001).
+The primary validation that has been done between the Python and GEE DisALEXI codes is to compare the outputs from all of the intermediate functions within TSEB.py and TSEB_utils.py for a single image, at two fixed points, for a small subset of air temperatures.  For this limited range of test inputs, all of the functions are generating nearly identical values (with a minimum tolerance of 0.000001).
 
 ### Test Values
 
