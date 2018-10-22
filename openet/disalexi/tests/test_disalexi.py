@@ -405,7 +405,7 @@ def test_Image_compute_ta_test_asset(xy, iterations, expected, tol=0.01):
     #     .reproject(crs='EPSG:4326', crsTransform=d_obj.et_transform)
 
     # Extract image values at a point using reduceRegion (with point geom)
-    output = utils.image_value(ta_coarse_img.select(['t_air']))
+    output = utils.image_value(ta_coarse_img.select(['t_air']), tile_scale=4)
     logging.debug('  Target values: {}'.format(expected['t_air']))
     logging.debug('  Output values: {}'.format(output['t_air']))
     assert abs(output['t_air'] - expected['t_air']) <= tol
