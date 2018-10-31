@@ -115,9 +115,8 @@ class Image(object):
             self.lc_type = lc_type
 
         # ALEXI ET - CONUS
-        self.et_coll = ee.ImageCollection(
-            'projects/climate-engine/alexi/conus/daily/et')
-        self.et_transform = [0.04, 0, -125.0, 0, -0.04, 49.80]
+        self.et_coll = ee.ImageCollection('projects/disalexi/alexi/CONUS')
+        self.et_transform = [0.04, 0, -125.04, 0, -0.04, 49.82]
         self.et_crs = 'EPSG:4326'
         # ALEXI ET - Global
         # self.et_coll = ee.ImageCollection('projects/climate-engine/alexi/global/daily/et')
