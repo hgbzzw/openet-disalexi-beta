@@ -32,13 +32,6 @@ Modules needed to run the test suite:
 
  * `pytest <https://docs.pytest.org/en/latest/>`__
 
-Running Tests
-=============
-
-.. code-block:: console
-
-    python -m pytest
-
 OpenET Namespace Package
 ========================
 
